@@ -1,40 +1,40 @@
 const Router = require('koa-router');
 
 const router = new Router({
-    prefix: '/user'
+    prefix: "/local_student_data"
 });
+let id = 100;
+let student = [
+    {id: id++, name: "Irish Pearl Sumicad", course: "BSIT", year: "4", section: "A", edit: false},
+    {id: id++, name: "Gavin Delos Reyes", course: "BSIT", year: "4", section: "A", edit: false},
+    {id: id++, name: "Isabel Dizon", course: "BSBA", year: "4", section: "A", edit: false},
+];
 
-let id = 1;
-
-let user = [
-    {id: id++, name: "Abegail", lastname: "Minoza", edit: false}
-]; 
-
-router.get('/', (ctx, next) => {
-    ctx.body = user;
+//all students data
+router.get(('/'), (ctx, next) => {
+    ctx.body = student;
+    console.log("Get All Student Data");
     next();
 });
 
-router.post('/create', (ctx, next) => {
-    console.log(ctx.request.body);
-    if(!ctx.request.body.name || !ctx.request.body.lastname)
+router.post('/insert', (ctx, next) => {
+    if(!ctx.request.body.name || !ctx.request.body.course || !ctx.request.body.year || !ctx.request.body.section)
     {
         ctx.response.status = 404;
-        ctx.body = "Missing Field";
-        console.log("Missing Field");
+        ctx.body = "Missing Fields";
+        console.log("Missing Fields");
     }
     else
     {
-        user.push({id: id++, name: ctx.request.body.name, lastname: ctx.request.body.lastname, edit: false});
-        ctx.response.status = 201;
-        ctx.body = "Successfully Added User";
-        console.log("Successfully Added User");
+        student.push({id: id++, name: ctx.request.body.name, course: ctx.request.body.course, year: ctx.request.body.year, section: ctx.request.body.section, edit: false});
+        ctx.response.status = 200;
+        ctx.body = "Successfully Inserted Student Data to Record";
+        console.log("Successfully Inserted Student Data to Record");
     }
     next();
 });
 
 router.post('/delete', (ctx, next) => {
-    console.log(ctx.request.body);
     if(!ctx.request.body.id)
     {
         ctx.response.status = 404;
@@ -43,18 +43,17 @@ router.post('/delete', (ctx, next) => {
     }
     else
     {
-        var index = user.findIndex(x => x.id == ctx.request.body.id);
-        console.log(index)
-        user.splice(index, 1);
-        ctx.response.status = 201;
-        ctx.body = "user Deleted";
-        console.log("User Deleted");
+        var index = student.findIndex(x => x.id == ctx.request.body.id);
+        student.splice(index, 1);
+        ctx.response.status = 200;
+        ctx.body = "Successfully Deleted Student Data From Record";
+        console.log("Successfully Deleted Student Data From Record");
     }
     next();
 });
 
 router.post('/update', (ctx, next) => {
-    if(!ctx.request.body.name || !ctx.request.body.lastname || !ctx.request.body.id)
+    if(!ctx.request.body.id || !ctx.request.body.name || !ctx.request.body.course || !ctx.request.body.year || !ctx.request.body.section)
     {
         ctx.response.status = 404;
         ctx.body = "Missing Fields";
@@ -62,14 +61,13 @@ router.post('/update', (ctx, next) => {
     }
     else
     {
-        ctx.response.status = 201;
-        ctx.body = "user Deleted";
-        var index = user.findIndex(x => x.id == ctx.request.body.id);
-        user[index].name = ctx.request.body.name;
-        user[index].lastname =ctx.request.body.lastname;
-        console.log("User Updated");
+        var index = student.findIndex(x => x.id == ctx.request.body.id);
+        student[index].name = ctx.request.body.name;
+        student[index].course = ctx.request.body.course;
+        student[index].year = ctx.request.body.year;
+        student[index].section = ctx.request.body.section;
+        ctx.response.status = 200;
+        ctx.body = "Successfully Updated Student Data On Record";
+        console.log("Successfully Updated Student Data On Record");
     }
-    next();
-});
-
-module.exports = router;
+})
